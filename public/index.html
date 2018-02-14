@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/css/style.css">
+        <title>Super-duper Youtube video service</title>
+    </head>
+    <body>
+        <h1>search and watch youtube videos here</h1>
+        <div class="search-container">
+            <input id="search-form" type="text" placeholder="Search...">
+            <div id="found-content"></div>
+        </div>
+        <div class="content-container">
+            <div class="history-container">
+                <h4>History</h4>
+            </div>
+            <div class="video-container">
+                    <div id="youtube-player"></div>                            
+            </div>
+        </div>
+        <script
+			  src="http://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+        <script src="https://www.youtube.com/iframe_api"></script> 
+
+        <script src="/js/main.js"></script>
+        
+    </body>
+</html>
