@@ -5,7 +5,7 @@ function Routes () {
   this.configure = function (app) {
     app.get('/api/history', HistoryController.getHistory);
     app.post('/api/history', HistoryController.addToHistory);
-    app.delete('/api/history', HistoryController.removeHistory);
+    app.delete('/api/history/:id', HistoryController.removeHistory);
 
     app.use(function (error, req, res, next) {
       if (error) {

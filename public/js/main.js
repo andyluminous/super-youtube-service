@@ -1,13 +1,22 @@
 var player;
 var foundVids = [];
+var foundHash = {};
+var historyVids;
 function onYouTubeIframeAPIReady () {
   player = new YT.Player('youtube-player');
 }
 
-function changeVideo (id) {
-  console.log('changing to', id);
+function playVideo (id, fromHistory) {
   player.loadVideoById(id);
-  // toggleShowResults('off')
+  if (!fromHistory) {
+    historyCtrl.set(foundHash[id]).done((data) => {
+      historyVids.unshift(data.history);
+      if (historyVids.length > 10) {
+        historyVids.length = 10;
+      }
+      drawHistory(historyVids);
+    });
+  }
 }
 
 $(document).ready(function () {
@@ -24,6 +33,11 @@ $(document).ready(function () {
   $('#search-form').focusout(() => {
       setTimeout(() => {toggleShowResults('off')}, 250);
   })
+  historyCtrl.get().done((data) => {
+    historyVids = data.result;
+    drawHistory(historyVids);
+  });
+  
 })
 
 function debounce (func, wait, immediate) {
@@ -45,6 +59,14 @@ function debounce (func, wait, immediate) {
 function getSearchResults (data) {
   if (data.items.length) {
     foundVids = data.items;
+    foundHash = {};
+    foundVids.forEach(el => {
+      foundHash[el.id.videoId] = {
+        videoId : el.id.videoId,
+        title : el.snippet.title,
+        thumbnail: el.snippet.thumbnails.default.url
+      }
+    })
     drawResults(foundVids);
   }  
 }
@@ -56,25 +78,46 @@ function drawResults (data) {
     let img = $(`<img src="${el.snippet.thumbnails.default.url}">`);
     let titleDiv = $(`<div></div>`).addClass('found-item');
     let titleP = $(`<p><strong>${el.snippet.title}</strong> <br> Published at: ${publishTime.toLocaleDateString('en-US')}</p>`)
-    let button = $(`<button>PLAY</button>`).val(el.id.videoId);
+    let button = $(`<button>PLAY</button>`).addClass('search-play').val(el.id.videoId);
     titleDiv.append(img).append(titleP).append(button);
     titleDiv.appendTo($('#found-content'))
+  });
+
+  $('.search-play').on('click',(event)=>{
+    playVideo(event.target.value);
+  });
+}
+
+function drawHistory (data) {
+  let historyCnt = $('#history-content');
+  historyCnt.empty();
+  data.forEach(el => {
+    let img = $(`<img src="${el.thumbnail}">`);
+    let div = $(`<div></div>`).addClass('history-item');
+    let p = $(`<p>${el.title}</p>`);
+    let watchAgainButton = $(`<button>▶</button>`).addClass('history-play').val(el.videoId);
+    let deleteButton = $(`<button>X</button>`).addClass('history-delete').val(el._id);
+    div.append([img, p, watchAgainButton, deleteButton]);
+    div.appendTo(historyCnt)
   })
-
-  console.log($('button'));
-
-  $('button').on('click',(event)=>{
-    console.log('CLICKED',event)
-    changeVideo(event.target.value);
-  })  
+  $('.history-play').on('click',(event)=>{
+    playVideo(event.target.value, true);
+  });
+  $('.history-delete').on('click',(event)=>{
+    historyCtrl.delete(event.target.value).done((data) => {
+      historyCtrl.get().done((data) => {
+        historyVids = data.result;
+        drawHistory(historyVids);
+      });
+    })
+  });
 }
 
 function toggleShowResults (swtch) {
   if (swtch === 'on') {
     $('#found-content').show();
-    $('button').on('click',(event)=>{
-      console.log('CLICKED',event)
-      changeVideo(event.target.value);
+    $('.search-play').on('click',(event)=>{
+      playVideo(event.target.value);
     })  
   } else {
     $('#found-content').hide();

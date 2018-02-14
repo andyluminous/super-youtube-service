@@ -2,6 +2,10 @@ body {
     margin: 0;
 }
 
+body h1 {
+    align: center;
+}
+
 .search-container {
     width: 66vw;
     margin-left: 17vw;
@@ -17,18 +21,13 @@ body {
 
 .content-container {
     display: flex;
-    flex-direction: row-reverse;
-}
-
-.history-container {
-    order: 2;
-    flex-grow: 2;
+    flex-direction: row;
+    align-content: space-around;
 }
 
 .video-container {
-    order: 1;
-    flex-grow: 3;
-    padding: 1em;
+    order: 2;
+    padding: 1.5em;
 }
 
 #found-content {
@@ -68,4 +67,56 @@ body {
 .found-item button:hover {
     color: #FFF;
     background-color: #AAA;
+}
+
+.history-container {
+    order: 1;
+}
+
+#history-content {
+    width: 100%
+}
+
+.history-item {
+    clear: both;
+    max-width: 25vw;
+    position: relative;
+    padding: 5px;
+    overflow: hidden;
+    border: 1px solid #DDD;
+}
+.history-item p {
+    margin-top: 0;
+}
+
+.history-item img {
+    height: 67px;
+    width: 90px;
+    float: left;
+    margin-right: 15px;
+}
+
+.history-item button {
+    border: none;
+    color: white;
+    padding: 7px;
+    font-weight: bold;
+    font-size: 20;
+    margin: 2px;
+    border-radius: 2px;
+}
+
+.history-play {
+    background-color: green;
+    position: absolute;
+    bottom: 3px;
+    right: 33px;
+}
+
+.history-delete {
+    background-color: red;
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+
 }
